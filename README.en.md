@@ -13,6 +13,17 @@
 2.  In WidgetRender, use QImage::Format_RGB32 and QImage::Format_ARGB32_Premultiplied image formats as much as possible. The following reasons:
     1.  Avoid most rendering directly to most of these formats using QPainter. Rendering is best optimized to the Format_RGB32  and Format_ARGB32_Premultiplied formats, and secondarily for rendering to the Format_RGB16, Format_RGBX8888,  Format_RGBA8888_Premultiplied, Format_RGBX64 and Format_RGBA64_Premultiplied formats.
 
+### `avformat_seek_file`, when the seek time point is less than the current time point, such as -5 seconds, -10 seconds, the seek does not reach the target time point
+
+#### One solution is: first`seek`to 0 seconds, then`seek`to the target time point.
+
+At this time, the seek of -5 seconds and -10 seconds works very well, much better than before. Before, sometimes it would be stuck at the current time point and could not seek to the target time point.
+
+```C++
+formatCtx->seek(0);
+formatCtx->seek(position);
+```
+
 ### Ffmpeg (5.0) is not the same as 4.4.3 in decoding subtitles
 
 ### Decoding subtitles (ffmpeg-n5.0):
@@ -71,7 +82,7 @@ transcodeCtx->audioPts += frame->nb_samples;
 
 <https://stackoverflow.com/questions/74500509/failed-to-setup-resampler-when-starting-qaudiosink>
 
-#### Dynamically switch Video Render, switch from opengl to widget, there is still GPU 0-3D occupation, and the usage is twice that of opengl! ! ! QT-BUG?
+#### 动态切换Video Render，从opengl切换到widget，还是有GPU 0-3D占用，而且使用量是opengl的2倍！！！QT-BUG？
 
 ### QOpenGLWidget memory leak, move zoom in and zoom out window, the code is as follows:
 
